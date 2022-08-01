@@ -1,0 +1,103 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Hash;
+use Carbon\Carbon;
+use App\Models\Houses;
+use App\Models\Payments;
+use App\Http\Controllers\Controller;
+
+date_default_timezone_set('Africa/Kampala');
+
+class DefaultersController extends Controller
+{
+    public function GetHousePrice($HouseID)
+    {
+        $Houses = Houses::where("HouseID", $HouseID)->first();
+
+        return $Houses->Price_Monthly;
+    }
+
+    public function CheckEndDate($TenantID, $EndDate)
+    {
+
+        $count = Payments::where("TenantID", $TenantID)
+            ->where('end_date', $EndDate)
+            ->count();
+
+        return $count;
+
+    }
+
+    public function SetDefaulters($TenantID)
+    {
+
+        $Payments = Payments::where("TenantID", $TenantID)
+            ->orderBy('id', 'desc')
+            ->first();
+        $Test          = Carbon::parse($Payments->end_date)->format('m');
+        $UserDate      = $Payments->end_date;
+        $UserDateMonth = date('m', strtotime($UserDate));
+        $UserDateYear  = date('Y', strtotime($UserDate));
+        $UserDateDay   = date('d', strtotime($UserDate));
+
+        $CurrentDate  = date('Y-m-d');
+        $CurrentMonth = date('m', strtotime($CurrentDate));
+        $CurrentYear  = date('Y', strtotime($CurrentDate));
+        $CurrentDay   = date('d', strtotime($CurrentDate));
+
+        dd($Payments->end_date . ' User Date Month ' . $CurrentMonth . ' Current Month');
+
+        if ($UserDateMonth >= $CurrentMonth && $UserDateYear == $CurrentYear) {
+
+            return true;
+
+        } else {
+
+            $PaymentDateMain = Carbon::parse($UserDate);
+            $IncrementDate   = $PaymentDateMain->addMonth();
+
+            $EndDate   = Carbon::parse($IncrementDate)->endOfMonth()->toDateString();
+            $PaymentID = Hash::make($EndDate . 'asd' . $Payments->TenantID);
+
+            $IncDate  = $IncrementDate;
+            $IncMonth = date('M', strtotime($IncDate));
+            $IncYear  = date('Y', strtotime($IncDate));
+            $IncDay   = date('d', strtotime($IncDate));
+
+            $End_Date  = $EndDate;
+            $End_Month = date('M', strtotime($IncDate));
+            $End_Year  = date('Y', strtotime($IncDate));
+            $End_Day   = date('d', strtotime($IncDate));
+
+            $start_date_main = Carbon::parse($IncrementDate)
+                ->firstOfMonth()
+                ->toDateString();
+
+            if ($this->CheckEndDate($TenantID, $EndDate) < 1) {
+
+                $Defaulters = new Payments;
+
+                $Defaulters->HouseID          = $Payments->HouseID;
+                $Defaulters->RoomID           = $Payments->RoomID;
+                $Defaulters->Payment_validity = "Defaulted Payment";
+                $Defaulters->LocID            = $Payments->LocID;
+                $Defaulters->TenantID         = $Payments->TenantID;
+                $Defaulters->start_date       = $start_date_main;
+                $Defaulters->start_Year       = $IncYear;
+                $Defaulters->start_Month      = $IncMonth;
+                $Defaulters->end_Month        = $End_Month;
+                $Defaulters->end_Year         = $End_Year;
+                $Defaulters->PaymentID        = $PaymentID;
+                $Defaulters->end_date         = $EndDate;
+                $Defaulters->Amount           = $this->GetHousePrice($Payments->HouseID);
+                $Defaulters->desc             = "This is a defaulted payment. It indicates that the tenant has not yet paid for this month, when the tenant pays for this month , adjustments will be made automatically";
+
+                $Defaulters->save();
+
+            }
+
+        }
+    }
+}

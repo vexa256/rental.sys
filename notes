@@ -1,0 +1,9 @@
+======> Create an if for removing duplicate assignments
+===> Payments only record figures and status;
+====> make sure payment are for current month and year -- check for past and present
+====>Correct Payment Year OverFlows;
+
+===>Mak sure tables dont accept dupliactes and pour the db
+===>Make tenant ID unique in assignments table
+
+====>Check delete assignments and house occ logic

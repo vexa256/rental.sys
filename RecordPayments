@@ -1,0 +1,76 @@
+<div class="row  ">
+
+    <div class="col-md-6 shadow-lg p-2">
+        <div class="table-responsive">
+
+         <table class="filtered_t table table-dark table-sm table-dark card-table table-vcenter  datatable">
+          <thead>
+           <tr>
+            <th>Tenant</th>
+            <th>House</th>
+            <th>Location</th>
+            <th>Room Type</th>
+            <th>Price/month (UGX)</th>
+
+           </tr>
+          </thead>
+          <tbody>
+         <tr style="font-size:12px">
+             <td>{{ $data->tenant }}</td>
+             <td>{{ $data->House }}</td>
+             <td>{{ $data->Locations }}</td>
+             <td>{{ $data->SetupName }}</td>
+             <td>{{ $data->Price_Monthly }}</td>
+         </tr>
+         </tbody>
+        </table>
+
+       </div>
+       </div>
+
+
+
+
+<form method="POST" action="{{ route('SubmitPayment') }}" class="bg-dark hidden-light col-md-6 g-3 needs-validation shadow-lg p-3" >
+
+    <input type="hidden" name="HouseID" value="{{ $data->HouseID }}">
+    <input type="hidden" name="RoomID" value="{{ $data->RoomID }}">
+    <input type="hidden" name="TenantID" value="{{ $data->TenantID }}">
+    <input type="hidden" name="LocID" value="{{ $data->locID }}">
+    <input type="hidden" name="TID" value="{{ $data->TID }}">
+
+<h3>Record Payment</h3>
+    @csrf
+  <div class="row">
+  <div class="col-md-6">
+    <label  class="form-label text-light">Amount</label>
+    <input type="text" name="Amount" class="form-control IntOnly"  required style="color:black !important">
+
+
+  </div>
+
+
+  <div class="col-md-6">
+    <label class="form-label text-light" for="">Payment valid up to</label>
+    <div class="input-icon ">
+     <input required name="end_date" class="form-control " id="datepicker-icon" value="{{ date('Y-M-d') }}">
+     <span class="input-icon-addon"> </span>
+    </div>
+   </div>
+
+
+   <div class="col-md-12 mt-3 hidden-dark">
+    <label class="form-label text-light" for="">Payment Notes</label>
+    <textarea   id="desc_pay" name="desc" style="color:black !important">
+    <h2>Type the payment notes here</h2>
+    <h4>Describe the payment terms and conditions including the payment validity details</h4>
+    </textarea>
+   </div>
+
+  <div class="col-12 mt-2">
+    <button class="btn btn-primary" type="submit">Record payment</button>
+  </div>
+  </div>
+</form>
+
+</div>

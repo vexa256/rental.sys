@@ -1,0 +1,40 @@
+  <?php for ($m = 1; $m <= 12; ++$m) {
+                  $Month = date('M', mktime(0, 0, 0, $m, 1));
+
+                  if ($data->$Month == 'disabled') {
+
+                  } elseif ($data->$Month == 'defaulted') {
+
+                    echo'
+          <div class="col-md-4">
+
+            <label  class="form-label">'. $Month.' (defaulted)</label>
+            <select class="form-control" name="'. $Month.'">
+                <option value=""></option>
+                <option value="paid for">record payment</option>
+            </select>
+
+          </div>';
+
+
+                }elseif ($data->$Month == 'unused') {
+
+                    echo'
+          <div class="col-md-4">
+
+            <label  class="form-label">'. $Month.' (Unused)</label>
+            <select class="form-control" name="'. $Month.'">
+                <option value=""></option>
+                <option value="paid for">record payment</option>
+            </select>
+
+          </div>';
+
+
+
+                }
+
+
+
+              } ?>
+
